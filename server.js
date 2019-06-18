@@ -21,17 +21,49 @@ servidor.get('/pokemons/:pokemonId', (request, response) => {
   const pokemonId = request.params.pokemonId
   controller.getById(pokemonId)
     .then(pokemon => {
-      if(!pokemon){ // pokemon === null || pokemon === undefined
-        response.sendStatus(404) // pokemon nao encontrada
+      if(!pokemon){
+        response.sendStatus(404)
       } else {
-        response.send(pokemon) // Status default é 200
+        response.send(pokemon)
       }
     })
     .catch(error => {
       if(error.name === "CastError"){
-        response.sendStatus(400) // bad request - tem algum parametro errado
+        response.sendStatus(400)
       } else {
-        response.sendStatus(500) // deu ruim, e nao sabemos oq foi
+        response.sendStatus(500)
+      }
+    })
+})
+
+servidor.patch('/pokemons/:id', (request, response) => {
+  const id = request.params.id
+  controller.update(id, request.body)
+    .then(pokemon => {
+      if(!pokemon) { response.sendStatus(404) }
+      else { response.send(pokemon) }
+    })
+    .catch(error => {
+      if(error.name === "MongoError" || error.name === "CastError"){
+        response.sendStatus(400)
+      } else {
+        response.sendStatus(500)
+      }
+    })
+})
+
+servidor.patch('/pokemons/treinar/:id', (request, response) => {
+  const id = request.params.id
+  controller.treinar(id, request.body)
+    .then(pokemon => {
+      if(!pokemon) { response.sendStatus(404) }
+      else { response.send(pokemon) }
+    })
+    .catch(error => {
+      if(error.name === "MongoError" || error.name === "CastError"){
+        response.sendStatus(400)
+      } else {
+        response.sendStatus(500)
       }
     })
 })
@@ -44,13 +76,30 @@ servidor.post('/pokemons', (request, response) => {
     })
     .catch(error => {
       if(error.name === "ValidationError"){
-        response.sendStatus(400) // bad request
+        response.sendStatus(400)
       } else {
         response.sendStatus(500)
       }
     })
 })
 
+servidor.delete('/pokemons/:id', (request, response) => {
+  controller.remove(request.params.id)
+    .then(pokemon => {
+      if(pokemon === null || pokemon === undefined){ // if(!comida) 
+        response.sendStatus(404) // not found
+      } else {
+        response.sendStatus(204)
+      }
+    })
+    .catch(error => {
+      if(error.name === "CastError"){
+        response.sendStatus(400) //bad request
+      } else {
+        response.sendStatus(500)
+      } 
+    })
+})
 
 servidor.listen(PORT)
 console.info(`Rodando na porta ${PORT}`)

@@ -1,11 +1,11 @@
 const { connect } = require('./PokemonsRepository')
 const pokemonsModel = require('./PokemonsSchema')
 
-connect() // para conectar no mongoDB
+connect()
 
-const calcularNivel = dates => {
-  const diff = date.dataInicio.valueOf() - dataFim.valueOf();
-  const horas = diff / 1000 / 60 / 60;
+const calcularNivel = (datas, nivelAnterior) => {
+  const diff = Math.abs(new Date(datas.dataInicio) - new Date(datas.dataFim)) / 3600000
+  return diff / 4 + nivelAnterior;
 }
 
 const getAll = async () => {
@@ -35,10 +35,21 @@ const update = (id, pokemon) => {
   )
 }
 
+const treinar = async (id, datas) => {
+  const pokemon = await pokemonsModel.findById(id, 'nivel')
+  const nivelAnterior = pokemon.nivel
+  return pokemonsModel.findByIdAndUpdate(
+    id,
+    { $set: { nivel: calcularNivel(datas, nivelAnterior)} },
+    { new: true },
+  )
+}
+
 module.exports = {
   getAll,
   getById,
   add,
   remove,
-  update
+  update,
+  treinar
 }
