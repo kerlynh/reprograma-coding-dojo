@@ -4,9 +4,6 @@ const bodyParser = require('body-parser')
 const servidor = express()
 const controller = require('./PokemonsController')
 const params = require('params')
-// const parametrosExcluidos = ['nivel']
-// const parametrosPermitidos = ['nome','foto']
-
 const parametrosPermitidos = require('./parametrosPermitidos')
 const PORT = 3000
 const logger = (request, response, next) => {
@@ -53,9 +50,8 @@ servidor.get('/pokemons/:pokemonId', (request, response) => {
 
 servidor.patch('/pokemons/:id', (request, response) => {
   const id = request.params.id
-  // controller.update(id, params(request.body), except(parametrosExcluidos)) -> duas formas do params: except e only
-  // controller.update(id, params(request.body), only(parametrosPermitidos))
-  controller.update(id, params(request.body), only(parametrosPermitidos.update))
+ 
+  controller.update(id, params(request.body).only(parametrosPermitidos.update))
 
     .then(pokemon => {
       if(!pokemon) { response.sendStatus(404) }
@@ -72,7 +68,7 @@ servidor.patch('/pokemons/:id', (request, response) => {
 
 servidor.patch('/pokemons/treinar/:id', (request, response) => {
   const id = request.params.id
-  controller.treinar(id, request.body)
+  controller.treinar(id, params(request.body).only(parametrosPermitidos.treinar))
     .then(pokemon => {
       if(!pokemon) { response.sendStatus(404) }
       else { response.send(pokemon) }
@@ -87,7 +83,7 @@ servidor.patch('/pokemons/treinar/:id', (request, response) => {
 })
 
 servidor.post('/pokemons', (request, response) => {
-  controller.add(request.body)
+  controller.add(params(request.body).only(parametrosPermitidos.add))
     .then(pokemon => {
       const _id = pokemon._id
       response.send(_id)
