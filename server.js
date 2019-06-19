@@ -4,9 +4,19 @@ const bodyParser = require('body-parser')
 const servidor = express()
 const controller = require('./PokemonsController')
 const PORT = 3000
+const logger = (request, response, next) => {
+  console.log(`Request type: ${request.method} to ${request.originalUrl}`)
+
+  response.on('finish', () => {
+    console.log(`${response.statusCode} ${response.statusMessage};`)
+  })
+
+  next()
+}
 
 servidor.use(cors())
 servidor.use(bodyParser.json())
+servidor.use(logger)
 
 servidor.get('/', (request, response) => {
   response.send('Olá, mundo!')
@@ -83,23 +93,6 @@ servidor.post('/pokemons', (request, response) => {
     })
 })
 
-servidor.delete('/pokemons/:id', (request, response) => {
-  controller.remove(request.params.id)
-    .then(pokemon => {
-      if(pokemon === null || pokemon === undefined){ // if(!comida) 
-        response.sendStatus(404) // not found
-      } else {
-        response.sendStatus(204)
-      }
-    })
-    .catch(error => {
-      if(error.name === "CastError"){
-        response.sendStatus(400) //bad request
-      } else {
-        response.sendStatus(500)
-      } 
-    })
-})
 
 servidor.listen(PORT)
 console.info(`Rodando na porta ${PORT}`)
