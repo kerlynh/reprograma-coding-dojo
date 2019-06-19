@@ -5,7 +5,7 @@ const servidor = express()
 const controller = require('./PokemonsController')
 const PORT = 3000
 const logger = (request, response, next) => {
-  console.log(`Request type: ${request.method} to ${request.originalUrl}`)
+  console.log(`${new Date().toISOString()} Request type: ${request.method} to ${request.originalUrl}`)
 
   response.on('finish', () => {
     console.log(`${response.statusCode} ${response.statusMessage};`)
