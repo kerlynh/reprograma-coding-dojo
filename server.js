@@ -3,6 +3,11 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const servidor = express()
 const controller = require('./PokemonsController')
+const params = require('params')
+// const parametrosExcluidos = ['nivel']
+// const parametrosPermitidos = ['nome','foto']
+
+const parametrosPermitidos = require('./parametrosPermitidos')
 const PORT = 3000
 const logger = (request, response, next) => {
   console.log(`${new Date().toISOString()} Request type: ${request.method} to ${request.originalUrl}`)
@@ -48,7 +53,10 @@ servidor.get('/pokemons/:pokemonId', (request, response) => {
 
 servidor.patch('/pokemons/:id', (request, response) => {
   const id = request.params.id
-  controller.update(id, request.body)
+  // controller.update(id, params(request.body), except(parametrosExcluidos)) -> duas formas do params: except e only
+  // controller.update(id, params(request.body), only(parametrosPermitidos))
+  controller.update(id, params(request.body), only(parametrosPermitidos.update))
+
     .then(pokemon => {
       if(!pokemon) { response.sendStatus(404) }
       else { response.send(pokemon) }
