@@ -1,4 +1,4 @@
-const { connect } = require('./PokemonsRepository')
+const { connect } = require('./PokemonsApiRepository')
 const pokemonsModel = require('./PokemonsSchema')
 const LIMITE_NIVEL_POKEMON = 150
 

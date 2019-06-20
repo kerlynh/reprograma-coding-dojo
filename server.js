@@ -2,9 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const servidor = express()
-const controller = require('./PokemonsController')
-const params = require('params')
-const parametrosPermitidos = require('./parametrosPermitidos')
+const pokemonsController = require('./PokemonsController')
+const treinadoresController = require('./TreinadoresController')
 const PORT = 3000
 const logger = (request, response, next) => {
   console.log(`${new Date().toISOString()} Request type: ${request.method} to ${request.originalUrl}`)
@@ -25,13 +24,13 @@ servidor.get('/', (request, response) => {
 })
 
 servidor.get('/pokemons', async (request, response) => {
-  controller.getAll()
+  pokemonsController.getAll()
     .then(pokemons => response.send(pokemons))
 })
 
 servidor.get('/pokemons/:pokemonId', (request, response) => {
   const pokemonId = request.params.pokemonId
-  controller.getById(pokemonId)
+  pokemonsController.getById(pokemonId)
     .then(pokemon => {
       if(!pokemon){
         response.sendStatus(404)
@@ -50,9 +49,7 @@ servidor.get('/pokemons/:pokemonId', (request, response) => {
 
 servidor.patch('/pokemons/:id', (request, response) => {
   const id = request.params.id
- 
-  controller.update(id, params(request.body).only(parametrosPermitidos.update))
-
+  pokemonsController.update(id, request.body)
     .then(pokemon => {
       if(!pokemon) { response.sendStatus(404) }
       else { response.send(pokemon) }
@@ -68,7 +65,7 @@ servidor.patch('/pokemons/:id', (request, response) => {
 
 servidor.patch('/pokemons/treinar/:id', (request, response) => {
   const id = request.params.id
-  controller.treinar(id, params(request.body).only(parametrosPermitidos.treinar))
+  pokemonsController.treinar(id, request.body)
     .then(pokemon => {
       if(!pokemon) { response.sendStatus(404) }
       else { response.send(pokemon) }
@@ -83,7 +80,7 @@ servidor.patch('/pokemons/treinar/:id', (request, response) => {
 })
 
 servidor.post('/pokemons', (request, response) => {
-  controller.add(params(request.body).only(parametrosPermitidos.add))
+  pokemonsController.add(request.body)
     .then(pokemon => {
       const _id = pokemon._id
       response.send(_id)
@@ -97,6 +94,78 @@ servidor.post('/pokemons', (request, response) => {
     })
 })
 
+// Rotas TREINADORES
+
+servidor.get('/treinadores', async (request, response) => {
+  treinadoresController.getAll()
+    .then(treinadores => response.send(treinadores))
+})
+
+servidor.get('/treinadores/:treinadorId', (request, response) => {
+  const treinadorId = request.params.treinadorId
+  treinadoresController.getById(treinadorId)
+    .then(treinador => {
+      if(!treinador){
+        response.sendStatus(404)
+      } else {
+        response.send(treinador)
+      }
+    })
+    .catch(error => {
+      if(error.name === "CastError"){
+        response.sendStatus(400)
+      } else {
+        response.sendStatus(500)
+      }
+    })
+})
+
+servidor.patch('/treinadores/:id', (request, response) => {
+  const id = request.params.id
+  treinadoresController.update(id, request.body)
+    .then(treinador => {
+      if(!treinador) { response.sendStatus(404) }
+      else { response.send(treinador) }
+    })
+    .catch(error => {
+      if(error.name === "MongoError" || error.name === "CastError"){
+        response.sendStatus(400)
+      } else {
+        response.sendStatus(500)
+      }
+    })
+})
+
+servidor.post('/treinadores', (request, response) => {
+  treinadoresController.add(request.body)
+    .then(treinador => {
+      const _id = treinador._id
+      response.send(_id)
+    })
+    .catch(error => {
+      if(error.name === "ValidationError"){
+        response.sendStatus(400)
+      } else {
+        response.sendStatus(500)
+      }
+    })
+})
+
+servidor.post('/treinadores/adicionar-pokemon/:treinadorId', (request, response) => {
+  const treinadorId = request.params.treinadorId
+  treinadoresController.addPokemon(treinadorId, request.body)
+    .then(treinador => {
+      const _id = treinador._id
+      response.send(_id)
+    })
+    .catch(error => {
+      if(error.name === "ValidationError"){
+        response.sendStatus(400)
+      } else {
+        response.sendStatus(500)
+      }
+    })
+})
 
 servidor.listen(PORT)
 console.info(`Rodando na porta ${PORT}`)
