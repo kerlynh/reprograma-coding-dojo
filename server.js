@@ -30,9 +30,10 @@ servidor.get('/pokemons', async (request, response) => {
     .then(pokemons => response.send(pokemons))
 })
 
-servidor.get('/pokemons/:pokemonId', (request, response) => {
+servidor.get('/treinadores/:treinadorId/pokemons/:pokemonId', (request, response) => {
+  const treinadorId = request.params.treinadoresId
   const pokemonId = request.params.pokemonId
-  pokemonsController.getById(pokemonId)
+  treinadoresController.getByIdPokemonId(treinadorId, pokemonId)
     .then(pokemon => {
       if(!pokemon){
         response.sendStatus(404)

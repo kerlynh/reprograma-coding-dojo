@@ -72,6 +72,13 @@ const updatePokemon = (treinadorId, pokemonId, pokemon) => {
   )
 }
 
+const getByIdPokemonId = async (treinadorId, pokemonId) => {
+  const treinador = await getById(treinadorId)
+  return treinador.pokemons.find(pokemon => {
+    return pokemon._id == pokemonId
+  })
+}
+
 module.exports = {
   getAll,
   getById,
@@ -81,5 +88,6 @@ module.exports = {
   addPokemon,
   treinarPokemon,
   getPokemons,
-  updatePokemon
+  updatePokemon,
+  getByIdPokemonId
 }
