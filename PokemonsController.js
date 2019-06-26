@@ -21,10 +21,10 @@ const getById = (id) => {
   return pokemonsModel.findById(id)
 }
 
-const add = (pokemon) => {
-  const novoPokemon = new pokemonsModel(pokemon)
-  return novoPokemon.save()
-}
+// const add = (pokemon) => {
+//   const novoPokemon = new pokemonsModel(pokemon)
+//   return novoPokemon.save()
+// }
 
 const remove = (id) => {
   return pokemonsModel.findByIdAndDelete(id)
@@ -38,26 +38,26 @@ const update = (id, pokemon) => {
   )
 }
 
-const treinar = async (id, datas) => {
-  const pokemon = await pokemonsModel.findById(id, 'nivel')
-  const nivelPokemon = pokemon.nivel
+// const treinar = async (id, datas) => {
+//   const pokemon = await pokemonsModel.findById(id, 'nivel')
+//   const nivelPokemon = pokemon.nivel
 
-  if (nivelPokemon >= LIMITE_NIVEL_POKEMON) {
-    throw new Error('Seu pokémon já é forte o suficiente!')
-  }
+//   if (nivelPokemon >= LIMITE_NIVEL_POKEMON) {
+//     throw new Error('Seu pokémon já é forte o suficiente!')
+//   }
 
-  return pokemonsModel.findByIdAndUpdate(
-    id,
-    { $set: { nivel: calcularNivel(datas, nivelPokemon) } },
-    { new: true },
-  )
-}
+//   return pokemonsModel.findByIdAndUpdate(
+//     id,
+//     { $set: { nivel: calcularNivel(datas, nivelPokemon) } },
+//     { new: true },
+//   )
+// }
 
 module.exports = {
   getAll,
   getById,
-  add,
+  // add,
   remove,
-  update,
-  treinar
+  update
+  // treinar
 }
