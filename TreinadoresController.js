@@ -1,6 +1,7 @@
 const { connect } = require('./PokemonsApiRepository')
 const treinadoresModel = require('./TreinadoresSchema')
 const { pokemonsModel } = require('./PokemonsSchema')
+const bcrypt = require('bcryptjs')
 const LIMITE_NIVEL_POKEMON = 150
 
 connect()
@@ -22,8 +23,22 @@ const getById = (id) => {
   return treinadoresModel.findById(id)
 }
 
-const add = (treinador) => {
-  const novoTreinador = new treinadoresModel(treinador)
+const add = async (treinador) => {
+  const treinadorEncontrado = await treinadoresModel.findOne({ email: treinador.email})
+  console.log(treinadorEncontrado, treinador.email)
+    
+    if (treinadorEncontrado) {
+      throw new Error('email já cadastrado')
+    }
+
+    const salt = bcrypt.genSalt(10)
+    const senhaCriptografada = bcrypt.hashSync(treinador.senha, salt)
+    // console.log(senhaEncriptada)
+    // treinador.senha = senhaCriptografada
+
+  // const novoTreinador = new treinadoresModel(treinador)
+  const novoTreinador = new treinadoresModel({...treinador, senha: senhaCriptografada})
+
   return novoTreinador.save()
 }
 
@@ -79,6 +94,15 @@ const getByIdPokemonId = async (treinadorId, pokemonId) => {
   })
 }
 
+
+const login = (loginData) => {
+  const treinadorEncontrado = await treinadoresModel.findOne({ email: treinador.email})
+
+    if(treinadorEncontrado) {
+      bcrypt.compareSync(loginData.senha, treinadorEncontrado.senha)
+    }
+}
+
 module.exports = {
   getAll,
   getById,
@@ -89,5 +113,6 @@ module.exports = {
   treinarPokemon,
   getPokemons,
   updatePokemon,
-  getByIdPokemonId
+  getByIdPokemonId,
+  login
 }

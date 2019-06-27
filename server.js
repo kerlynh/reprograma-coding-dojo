@@ -149,6 +149,7 @@ servidor.post('/treinadores', (request, response) => {
       if(error.name === "ValidationError"){
         response.sendStatus(400)
       } else {
+        console.log(error)
         response.sendStatus(500)
       }
     })
@@ -207,6 +208,23 @@ servidor.patch('/treinadores/:treinadorId/pokemon/:pokemonId', (request, respons
       if(error.name === "MongoError" || error.name === "CastError"){
         response.sendStatus(400)
       } else {
+        response.sendStatus(500)
+      }
+    })
+})
+
+// login
+servidor.post('/treinadores/login', (request, response) => {
+   treinadoresController.login(request.body)
+    .then(treinador => {
+      const _id = treinador._id
+      response.send(_id)
+    })
+    .catch(error => {
+      if(error.name === "ValidationError"){
+        response.sendStatus(400)
+      } else {
+        console.log(error)
         response.sendStatus(500)
       }
     })
