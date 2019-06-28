@@ -6,6 +6,7 @@ const treinadoresController = require('./TreinadoresController')
 const params = require('params')
 const parametrosPermitidos = require('./parametrosPermitidos')
 const PORT = 3000
+const jwt = require('jsonwebtoken')
 const logger = (request, response, next) => {
   console.log(`${new Date().toISOString()} Request type: ${request.method} to ${request.originalUrl}`)
 
@@ -27,8 +28,25 @@ servidor.get('/', (request, response) => {
 // Rotas TREINADORES
 
 servidor.get('/treinadores', async (request, response) => {
-  treinadoresController.getAll()
-    .then(treinadores => response.send(treinadores))
+  const authHeader = request.get('authorization').split(' ')[1]
+  // console.log(authHeader)
+
+  if (authHeader) {
+    jwr.verify(authHeader, process.env.PRIVATE_KEY, function(error, decoded){
+      if (error) {
+        response.send(401)
+      } else {
+        auth = true
+      }
+    })
+  } else {
+    response.send(401)
+  }
+
+  if (auth) {
+    treinadoresController.getAll()
+      .then(treinadores => response.send(treinadores))
+  }
 })
 
 servidor.get('/treinadores/:treinadorId', (request, response) => {
