@@ -2,7 +2,6 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const servidor = express()
-const pokemonsController = require('./PokemonsController')
 const treinadoresController = require('./TreinadoresController')
 const params = require('params')
 const parametrosPermitidos = require('./parametrosPermitidos')
@@ -23,78 +22,6 @@ servidor.use(logger)
 
 servidor.get('/', (request, response) => {
   response.send('Olá, mundo!')
-})
-
-servidor.get('/pokemons', async (request, response) => {
-  pokemonsController.getAll()
-    .then(pokemons => response.send(pokemons))
-})
-
-servidor.get('/treinadores/:treinadorId/pokemons/:pokemonId', (request, response) => {
-  const treinadorId = request.params.treinadoresId
-  const pokemonId = request.params.pokemonId
-  treinadoresController.getByIdPokemonId(treinadorId, pokemonId)
-    .then(pokemon => {
-      if(!pokemon){
-        response.sendStatus(404)
-      } else {
-        response.send(pokemon)
-      }
-    })
-    .catch(error => {
-      if(error.name === "CastError"){
-        response.sendStatus(400)
-      } else {
-        response.sendStatus(500)
-      }
-    })
-})
-
-servidor.patch('/pokemons/:id', (request, response) => {
-  const id = request.params.id
-  pokemonsController.update(id, request.body)
-    .then(pokemon => {
-      if(!pokemon) { response.sendStatus(404) }
-      else { response.send(pokemon) }
-    })
-    .catch(error => {
-      if(error.name === "MongoError" || error.name === "CastError"){
-        response.sendStatus(400)
-      } else {
-        response.sendStatus(500)
-      }
-    })
-})
-
-servidor.patch('/pokemons/treinar/:id', (request, response) => {
-  const id = request.params.id
-  pokemonsController.treinar(id, request.body)
-    .then(pokemon => {
-      if(!pokemon) { response.sendStatus(404) }
-      else { response.send(pokemon) }
-    })
-    .catch(error => {
-      if(error.name === "MongoError" || error.name === "CastError"){
-        response.sendStatus(400)
-      } else {
-        response.sendStatus(500)
-      }
-    })
-})
-
-servidor.post('/pokemons', (request, response) => {
-  pokemonsController.add(request.body)
-    .then(pokemon => {
-      const _id = pokemon._id
-      response.send(_id)
-    })
-    .catch(error => {
-      if(error.name === "ValidationError"){
-        response.sendStatus(400)
-      } else {
-        response.sendStatus(500)
-      }
-    })
 })
 
 // Rotas TREINADORES
@@ -213,15 +140,34 @@ servidor.patch('/treinadores/:treinadorId/pokemon/:pokemonId', (request, respons
     })
 })
 
-// login
+servidor.get('/treinadores/:treinadorId/pokemons/:pokemonId', (request, response) => {
+  const treinadorId = request.params.treinadorId
+  const pokemonId = request.params.pokemonId
+  treinadoresController.getByPokemonId(treinadorId, pokemonId)
+    .then(pokemon => {
+      if(!pokemon){
+        response.sendStatus(404)
+      } else {
+        response.send(pokemon)
+      }
+    })
+    .catch(error => {
+      if(error.name === "CastError"){
+        response.sendStatus(400)
+      } else {
+        response.sendStatus(500)
+      }
+    })
+})
+
 servidor.post('/treinadores/login', (request, response) => {
-   treinadoresController.login(request.body)
-    .then(treinador => {
-      const _id = treinador._id
-      response.send(_id)
+  treinadoresController.login(request.body)
+    .then(loginResponse => {
+      response.send(loginResponse)
     })
     .catch(error => {
       if(error.name === "ValidationError"){
+        console.log(error)
         response.sendStatus(400)
       } else {
         console.log(error)

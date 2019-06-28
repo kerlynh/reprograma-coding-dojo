@@ -4,7 +4,7 @@ Authentication
   [x] BCrypt
   [X] Criptografia Assimétrica
   [X] RSA (http://travistidwell.com/jsencrypt/demo/index.html)
-  [] Cadastro
+  [x] Cadastro
     [x] Instalar bcryptjs
     [x] Criar rota de cadastro
     [x] Adicionar campos de email e senha ao Schema de treinador
@@ -12,20 +12,19 @@ Authentication
     [x] Checar se o email enviado já não está cadastrado
     [x] Criar hash da senha do usuário com BCrypt
     [x] Salvar email/senha na base
-  [] Login
+  [x] Login
     [x] Criar rota de login
     [x] Criar método de login
     [x] Verificar se já existe usuário com email cadastrado
     [x] Comparar hash das senhas
-    [] Instalar JWT (jsonwebtoken)
-    [] Fazer require do JWT
-    [] Gerar novo token com base em um segredo
-    [] Gerar segredo RSA
-    [] Instalar dotenv-safe
-    [] Adicionar .env ao .gitignore
-    [] Criar arquivo ENV com as chaves públicas e privadas geradas
-    [] Criar arquivo .env.example com as chaves públicas e privadas geradas
-    [] Carregar ENVs
-    [] Importar chave privada e gerar token a partir dela
-Authorization
-  []
+    [x] Verificar se a senha tá correta
+    [x] Instalar JWT (jsonwebtoken)
+    [x] Fazer require do JWT
+    [x] Gerar novo token com base em um segredo
+    [x] Gerar segredo RSA
+    [x] Instalar dotenv-safe
+    [x] Adicionar .env ao .gitignore
+    [x] Criar arquivo .env com as chaves públicas e privadas geradas
+    [x] Criar arquivo .env.example com as chaves públicas e privadas geradas
+    [x] Carregar ENVs
+    [x] Importar chave privada e gerar token a partir dela
