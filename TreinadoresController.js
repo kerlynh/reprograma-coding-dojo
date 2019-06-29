@@ -102,8 +102,12 @@ const login = async (loginData) => {
 
     if (senhaCorreta) {
       const token = jwt.sign(
-        { email: treinadorEncontrado.email, id: treinadorEncontrado._id },
-        process.env.PRIVATE_KEY
+        {
+          email: treinadorEncontrado.email,
+          id: treinadorEncontrado._id
+        },
+        process.env.PRIVATE_KEY,
+        { expiresIn: 60 }
       )
       return { auth: true, token };
     } else {
