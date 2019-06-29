@@ -28,13 +28,15 @@ servidor.get('/', (request, response) => {
 // Rotas TREINADORES
 
 servidor.get('/treinadores', async (request, response) => {
-  const authHeader = request.get('authorization').split(' ')[1]
-  // console.log(authHeader)
-
+  // const authHeader = request.get('authorization').split(' ')[1] //bearer assdsdf
+  const authHeader = request.get('authorization')
+  let auth = false
+  
   if (authHeader) {
-    jwr.verify(authHeader, process.env.PRIVATE_KEY, function(error, decoded){
+    const token = authHeader.split(' ')[1]
+    jwt.verify(authHeader, process.env.PRIVATE_KEY, function(error, decoded){
       if (error) {
-        response.send(401)
+        response.send(403)
       } else {
         auth = true
       }
